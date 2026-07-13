@@ -31,7 +31,6 @@ table.custom-table th { background-color: #f0fdf4; color: #0b6623; font-weight: 
 # FUNCTION PARA SA PROFESSIONAL PDF GENERATOR
 # ==========================================
 def generate_pdf(html_content):
-    # Ito ang eksklusibong CSS Template para maging perpekto ang layout ng PDF
     pdf_template = f"""
     <html>
     <head>
@@ -115,7 +114,6 @@ if menu == "📊 Report Status":
         target_date_str = target_date.strftime('%Y-%m-%d')
         target_hour_str = target_time.strftime('%H:00')
         
-        # Paghihiwalayin natin ang rows ng Website at ng PDF
         web_report_rows = ""
         pdf_report_rows = ""
         go_routes, caution_routes, stop_routes = [], [], []
@@ -142,7 +140,6 @@ if menu == "📊 Report Status":
                             hangin = hour_data['wind_kph']
                             ulan = hour_data['precip_mm']
                             
-                            # Para sa Website (May kulay na box)
                             if ulan >= 10.0 or hangin >= 60.0:
                                 web_status = "<span style='background-color:#fee2e2; color:#991b1b; padding:4px 8px; font-weight:bold;'>STOP / HOLD</span>"
                                 pdf_status = "<span style='color:#991b1b; font-weight:bold;'>STOP / HOLD</span>"
@@ -186,87 +183,82 @@ if menu == "📊 Report Status":
         if stop_routes: script_text += f"Isang seryosong babala naman para sa {', '.join(stop_routes)} dahil sa banta ng baha. Ipinagbabawal muna ang pagbiyahe sa mga lugar na ito. "
         script_text += "Manatiling ligtas at nakatutok para sa mga susunod pang ulat!"
 
-        # ==========================================
-        # 1. HTML PARA SA WEBSITE DASHBOARD
-        # ==========================================
+# TANDAAN: TINANGGAL ANG MGA ESPASYO (INDENTATION) SA UNANG BAHAGI NG MGA HTML TAGS PARA HINDI MAG-ERROR.
         web_html = f"""<div class="report-wrapper">
-        <div style="background-color: #0b6623; color: #ffffff; padding: 25px; border-radius: 4px; margin-bottom: 20px;">
-        <h1 style="margin: 0; font-size: 24px; font-weight: bold;">TRANSPORT WEATHER ADVISORY</h1>
-        <p style="margin: 5px 0 0 0; font-size: 14px; color: #a7f3d0;">Automated Logistics Intelligence & Operations Report</p>
-        </div>
-        <table style="width: 100%; border: none; margin-bottom: 30px; color: #0f172a; background-color: transparent;">
-        <tr style="border: none;">
-        <td style="border: none;"><strong>Petsa ng Biyahe:</strong> {display_date}</td>
-        <td style="border: none;"><strong>Oras ng Biyahe:</strong> {display_time}</td>
-        <td style="border: none;"><strong>Status:</strong> <span style="background-color: {status_bg}; color: {status_color}; padding: 4px 8px; font-weight: bold;">{overall_status}</span></td>
-        </tr>
-        </table>
-        <h3 style="color: #0b6623; border-left: 4px solid #16a34a; padding-left: 10px;">1. Pangkalahatang Lagay ng Panahon (Executive Summary)</h3>
-        <div style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 15px; background-color: #f8fafc; color: #0f172a; margin-bottom: 20px;">
-        <p style="margin: 0;">{summary_text}</p>
-        </div>
-        <h3 style="color: #0b6623; border-left: 4px solid #16a34a; padding-left: 10px;">2. Katayuan ng mga Pangunahing Ruta at Hubs</h3>
-        <table class="custom-table" style="width: 100%; border-collapse: collapse; margin-bottom: 20px; color: #0f172a; background-color: #ffffff;">
-        <tr>
-        <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; background-color: #f0fdf4; color: #0b6623; font-weight: bold;">📍 Lokasyon / Hub</th>
-        <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; background-color: #f0fdf4; color: #0b6623; font-weight: bold;">🌦️ Inaasahang Panahon</th>
-        <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; background-color: #f0fdf4; color: #0b6623; font-weight: bold;">💨 Hangin</th>
-        <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; background-color: #f0fdf4; color: #0b6623; font-weight: bold;">🌧️ Ulan</th>
-        <th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; background-color: #f0fdf4; color: #0b6623; font-weight: bold;">🚦 Operational Status</th>
-        </tr>
-        {web_report_rows}
-        </table>
-        <h3 style="color: #0b6623; border-left: 4px solid #16a34a; padding-left: 10px;">3. Ready-to-Publish Weather News Script (Pang-Balita)</h3>
-        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; padding: 20px; font-style: italic; color: #166534; margin-bottom: 30px;">
-        "{script_text}"
-        </div>
-        <div style="border-top: 2px solid #e2e8f0; padding-top: 15px; margin-top: 20px;">
-            <p style="margin: 0; font-size: 14px; color: #475569;"><strong>Inihanda ni:</strong></p>
-            <p style="margin: 2px 0; font-size: 16px; font-weight: bold; color: #0f172a;">Jigger Coyoca</p>
-            <p style="margin: 0; font-size: 14px; color: #475569;">Group Transport Manager | Titan Transnational</p>
-        </div>
-        </div>"""
+<div style="background-color: #0b6623; color: #ffffff; padding: 25px; border-radius: 4px; margin-bottom: 20px;">
+<h1 style="margin: 0; font-size: 24px; font-weight: bold;">TRANSPORT WEATHER ADVISORY</h1>
+<p style="margin: 5px 0 0 0; font-size: 14px; color: #a7f3d0;">Automated Logistics Intelligence & Operations Report</p>
+</div>
+<table style="width: 100%; border: none; margin-bottom: 30px; color: #0f172a; background-color: transparent;">
+<tr style="border: none;">
+<td style="border: none;"><strong>Petsa ng Biyahe:</strong> {display_date}</td>
+<td style="border: none;"><strong>Oras ng Biyahe:</strong> {display_time}</td>
+<td style="border: none;"><strong>Status:</strong> <span style="background-color: {status_bg}; color: {status_color}; padding: 4px 8px; font-weight: bold;">{overall_status}</span></td>
+</tr>
+</table>
+<h3 style="color: #0b6623; border-left: 4px solid #16a34a; padding-left: 10px;">1. Pangkalahatang Lagay ng Panahon (Executive Summary)</h3>
+<div style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 15px; background-color: #f8fafc; color: #0f172a; margin-bottom: 20px;">
+<p style="margin: 0;">{summary_text}</p>
+</div>
+<h3 style="color: #0b6623; border-left: 4px solid #16a34a; padding-left: 10px;">2. Katayuan ng mga Pangunahing Ruta at Hubs</h3>
+<table class="custom-table" style="width: 100%; border-collapse: collapse; margin-bottom: 20px; color: #0f172a; background-color: #ffffff;">
+<tr>
+<th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; background-color: #f0fdf4; color: #0b6623; font-weight: bold;">📍 Lokasyon / Hub</th>
+<th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; background-color: #f0fdf4; color: #0b6623; font-weight: bold;">🌦️ Inaasahang Panahon</th>
+<th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; background-color: #f0fdf4; color: #0b6623; font-weight: bold;">💨 Hangin</th>
+<th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; background-color: #f0fdf4; color: #0b6623; font-weight: bold;">🌧️ Ulan</th>
+<th style="border: 1px solid #cbd5e1; padding: 12px; text-align: left; background-color: #f0fdf4; color: #0b6623; font-weight: bold;">🚦 Operational Status</th>
+</tr>
+{web_report_rows}
+</table>
+<h3 style="color: #0b6623; border-left: 4px solid #16a34a; padding-left: 10px;">3. Ready-to-Publish Weather News Script (Pang-Balita)</h3>
+<div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; padding: 20px; font-style: italic; color: #166534; margin-bottom: 30px;">
+"{script_text}"
+</div>
+<div style="border-top: 2px solid #e2e8f0; padding-top: 15px; margin-top: 20px;">
+<p style="margin: 0; font-size: 14px; color: #475569;"><strong>Inihanda ni:</strong></p>
+<p style="margin: 2px 0; font-size: 16px; font-weight: bold; color: #0f172a;">Jigger Coyoca</p>
+<p style="margin: 0; font-size: 14px; color: #475569;">Group Transport Manager | Titan Transnational</p>
+</div>
+</div>"""
 
-        # ==========================================
-        # 2. HTML EKSKLUSIBO PARA SA DOWNLOADABLE PDF
-        # ==========================================
         pdf_html = f"""
-        <div class="header">
-            <h1>TRANSPORT WEATHER ADVISORY</h1>
-            <p>Automated Logistics Intelligence & Operations Report</p>
-        </div>
-        <table class="info-table">
-            <tr>
-                <td width="35%"><strong>Petsa ng Biyahe:</strong><br/>{display_date}</td>
-                <td width="30%"><strong>Oras ng Biyahe:</strong><br/>{display_time}</td>
-                <td width="35%"><strong>Status:</strong><br/><span style="color: {status_color}; font-weight: bold;">{overall_status}</span></td>
-            </tr>
-        </table>
-        <div class="section-title">1. Pangkalahatang Lagay ng Panahon (Executive Summary)</div>
-        <div class="summary-box">
-            {summary_text}
-        </div>
-        <div class="section-title">2. Katayuan ng mga Pangunahing Ruta at Hubs</div>
-        <table class="custom-table">
-            <tr>
-                <th>Lokasyon / Hub</th>
-                <th>Inaasahang Panahon</th>
-                <th>Hangin</th>
-                <th>Ulan</th>
-                <th>Operational Status</th>
-            </tr>
-            {pdf_report_rows}
-        </table>
-        <div class="section-title">3. Ready-to-Publish Weather News Script (Pang-Balita)</div>
-        <div class="script-box">
-            "{script_text}"
-        </div>
-        <div class="footer">
-            <p><strong>Inihanda ni:</strong></p>
-            <p style="font-size: 12pt; font-weight: bold; color: #0f172a;">Jigger Coyoca</p>
-            <p>Group Transport Manager | Titan Transnational</p>
-        </div>
-        """
+<div class="header">
+<h1>TRANSPORT WEATHER ADVISORY</h1>
+<p>Automated Logistics Intelligence & Operations Report</p>
+</div>
+<table class="info-table">
+<tr>
+<td width="35%"><strong>Petsa ng Biyahe:</strong><br/>{display_date}</td>
+<td width="30%"><strong>Oras ng Biyahe:</strong><br/>{display_time}</td>
+<td width="35%"><strong>Status:</strong><br/><span style="color: {status_color}; font-weight: bold;">{overall_status}</span></td>
+</tr>
+</table>
+<div class="section-title">1. Pangkalahatang Lagay ng Panahon (Executive Summary)</div>
+<div class="summary-box">
+{summary_text}
+</div>
+<div class="section-title">2. Katayuan ng mga Pangunahing Ruta at Hubs</div>
+<table class="custom-table">
+<tr>
+<th>Lokasyon / Hub</th>
+<th>Inaasahang Panahon</th>
+<th>Hangin</th>
+<th>Ulan</th>
+<th>Operational Status</th>
+</tr>
+{pdf_report_rows}
+</table>
+<div class="section-title">3. Ready-to-Publish Weather News Script (Pang-Balita)</div>
+<div class="script-box">
+"{script_text}"
+</div>
+<div class="footer">
+<p><strong>Inihanda ni:</strong></p>
+<p style="font-size: 12pt; font-weight: bold; color: #0f172a;">Jigger Coyoca</p>
+<p>Group Transport Manager | Titan Transnational</p>
+</div>
+"""
 
         # Ipakita ang Web version sa browser
         st.markdown(web_html, unsafe_allow_html=True)
