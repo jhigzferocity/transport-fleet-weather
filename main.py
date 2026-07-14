@@ -101,16 +101,38 @@ if menu == "📊 Report Status":
     target_date = colA.date_input("🗓️ Petsa ng Biyahe (Forecast):", today, min_value=today, max_value=max_date)
     target_time = colB.time_input("⏰ Oras ng Biyahe:", datetime.now())
     
+    st.markdown("---")
+    st.markdown("### 📍 Route & Hub Selection (Barangay-Level)")
+    st.info("💡 Maaari ka nang mag-add ng eksaktong Barangay o Kalsada para sa mas accurate na lagay ng panahon!")
+    
+    # SYSTEM UPGRADE: BARANGAY ADDER
+    if 'custom_locations' not in st.session_state:
+        st.session_state.custom_locations = []
+        
+    col_input, col_btn = st.columns([3, 1])
+    new_barangay = col_input.text_input("➕ Wala sa listahan? I-type ang partikular na Barangay/Lugar (Hal: Brgy. Tubigan, Binan, Laguna):")
+    if col_btn.button("I-add sa Listahan", use_container_width=True):
+        if new_barangay and new_barangay not in ph_cities and new_barangay not in st.session_state.custom_locations:
+            st.session_state.custom_locations.append(new_barangay)
+            st.success(f"Naidagdag ang '{new_barangay}' sa pagpipilian!")
+            
+    # Pagsasamahin natin ang original cities at ang mga naidagdag mong barangay
+    updated_ph_cities = ph_cities + st.session_state.custom_locations
+
     selected_routes = st.multiselect(
-        "📍 Pumili ng mga Ruta at Hubs para sa ulat:", 
-        ph_cities,
+        "Pumili ng mga Ruta para sa ulat:", 
+        updated_ph_cities,
         default=["Binan, Laguna", "Manila", "Marilao, Bulacan", "Butuan City"]
     )
     st.markdown("---")
 
     if selected_routes:
-        api_key = "1a45afafbda94c0baf173125261207" 
-        
+        # Ligtas na pagkuha ng API Key
+        try:
+            api_key = st.secrets["WEATHER_API_KEY"]
+        except:
+            api_key = "1a45afafbda94c0baf173125261207"
+            
         target_date_str = target_date.strftime('%Y-%m-%d')
         target_hour_str = target_time.strftime('%H:00')
         
@@ -118,7 +140,7 @@ if menu == "📊 Report Status":
         pdf_report_rows = ""
         go_routes, caution_routes, stop_routes = [], [], []
         
-        with st.spinner('Kumukuha ng forecast data para sa napiling oras...'):
+        with st.spinner('Kumukuha ng granular forecast data para sa napiling oras...'):
             for lokasyon in selected_routes:
                 url = f"http://api.weatherapi.com/v1/forecast.json?key={api_key}&q={lokasyon}&days=3&aqi=no"
                 try:
@@ -155,6 +177,8 @@ if menu == "📊 Report Status":
                                 
                             web_report_rows += f"<tr><td><strong>{lokasyon}</strong></td><td>{kondisyon}</td><td>{hangin} kph</td><td>{ulan} mm</td><td>{web_status}</td></tr>\n"
                             pdf_report_rows += f"<tr><td><strong>{lokasyon}</strong></td><td>{kondisyon}</td><td>{hangin} kph</td><td>{ulan} mm</td><td>{pdf_status}</td></tr>\n"
+                    else:
+                        st.warning(f"⚠️ Hindi mahanap ng weather satellite ang lokasyong: '{lokasyon}'. Subukang ayusin ang spelling (Hal: 'Brgy. Tubigan, Binan').")
                 except Exception as e:
                     pass
         
@@ -183,11 +207,10 @@ if menu == "📊 Report Status":
         if stop_routes: script_text += f"Isang seryosong babala naman para sa {', '.join(stop_routes)} dahil sa banta ng baha. Ipinagbabawal muna ang pagbiyahe sa mga lugar na ito. "
         script_text += "Manatiling ligtas at nakatutok para sa mga susunod pang ulat!"
 
-# TANDAAN: TINANGGAL ANG MGA ESPASYO (INDENTATION) SA UNANG BAHAGI NG MGA HTML TAGS PARA HINDI MAG-ERROR.
         web_html = f"""<div class="report-wrapper">
 <div style="background-color: #0b6623; color: #ffffff; padding: 25px; border-radius: 4px; margin-bottom: 20px;">
 <h1 style="margin: 0; font-size: 24px; font-weight: bold;">TRANSPORT WEATHER ADVISORY</h1>
-<p style="margin: 5px 0 0 0; font-size: 14px; color: #a7f3d0;">Automated Logistics Intelligence & Operations Report</p>
+<p style="margin: 5px 0 0 0; font-size: 14px; color: #a7f3d0;">Automated Logistics Intelligence & Operations Report (Barangay-Level)</p>
 </div>
 <table style="width: 100%; border: none; margin-bottom: 30px; color: #0f172a; background-color: transparent;">
 <tr style="border: none;">
@@ -225,7 +248,7 @@ if menu == "📊 Report Status":
         pdf_html = f"""
 <div class="header">
 <h1>TRANSPORT WEATHER ADVISORY</h1>
-<p>Automated Logistics Intelligence & Operations Report</p>
+<p>Automated Logistics Intelligence & Operations Report (Barangay-Level)</p>
 </div>
 <table class="info-table">
 <tr>
@@ -260,10 +283,8 @@ if menu == "📊 Report Status":
 </div>
 """
 
-        # Ipakita ang Web version sa browser
         st.markdown(web_html, unsafe_allow_html=True)
         
-        # Gamitin ang PDF version para sa download button
         pdf_file = generate_pdf(pdf_html)
         st.download_button(
             label="📄 I-download ang Opisyal na Report (PDF)",
